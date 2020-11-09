@@ -10,9 +10,9 @@ const url = 'https://jsonplaceholder.typicode.com';
 export const BackendState = ({children}) => {
 
   const initialState = {
-    currentUser: null,
+    currentUser: window.__DATA__?.user || null,
     userTodos: [],
-    allTodos: [],
+    allTodos: window.__DATA__?.user?.todos || [],
     loading: false
   };
 
@@ -23,11 +23,13 @@ export const BackendState = ({children}) => {
 
   const fetchAllTodos = async () => {
     showLoader();
-    const res = await axios.get(`${url}/todos`);
-    dispatch({
-      type: FETCH_ALL_TODOS,
-      payload: res.data
-    });
+    if (!state.allTodos.length) {
+      const res = await axios.get(`${url}/todos`);
+      dispatch({
+        type: FETCH_ALL_TODOS,
+        payload: res.data
+      });
+    }
     hideLoader();
   };
 
